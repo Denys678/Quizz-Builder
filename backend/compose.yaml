@@ -4,14 +4,42 @@ services:
   db:
     image: postgres:16
     restart: unless-stopped
+
     environment:
       POSTGRES_USER: quiz_user
       POSTGRES_PASSWORD: quiz_password
       POSTGRES_DB: quiz_builder
+
     ports:
       - "5433:5432"
+
     volumes:
       - quiz_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quiz_user -d quiz_builder"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    restart: unless-stopped
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    environment:
+      DATABASE_URL: "postgresql://quiz_user:quiz_password@db:5432/quiz_builder?schema=public"
+      PORT: "5001"
+      FRONTEND_URL: "http://localhost:3000"
+
+    ports:
+      - "5001:5001"
 
 volumes:
   quiz_data:

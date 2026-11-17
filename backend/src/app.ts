@@ -1,8 +1,13 @@
 import express from "express";
+import cors from "cors";
 import quizRouter from "./modules/quizzes/quiz.routes.ts"
 import { errorHandler } from "./middlewares/error.middleware.ts";
 
 const app = express();
+
+app.use(cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+}));
 
 app.use(express.json());
 

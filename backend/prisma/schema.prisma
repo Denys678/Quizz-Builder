@@ -12,3 +12,43 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum QuestionType {
+  BOOLEAN
+  INPUT
+  CHECKBOX
+}
+
+model Quiz {
+  id          String     @id @default(uuid())
+  title       String
+  createdAt   DateTime   @default(now())
+  questions   Question[]
+}
+
+model Question {
+  id              String           @id @default(uuid())
+  quizId          String
+  title           String
+  type            QuestionType
+  position        Int
+  correctBoolean  Boolean?
+  correctText     String?
+
+  quiz      Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options   QuestionOption[]
+
+  @@index([quizId])
+}
+
+model QuestionOption {
+  id          String   @id @default(uuid())
+  questionId  String
+  text        String
+  isCorrect   Boolean  @default(false)
+  position    Int
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+}

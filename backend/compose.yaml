@@ -1,0 +1,17 @@
+name: quiz-builder
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: quiz_user
+      POSTGRES_PASSWORD: quiz_password
+      POSTGRES_DB: quiz_builder
+    ports:
+      - "5433:5432"
+    volumes:
+      - quiz_data:/var/lib/postgresql/data
+
+volumes:
+  quiz_data:

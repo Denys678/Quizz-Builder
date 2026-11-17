@@ -1,4 +1,6 @@
 import express from "express";
+import quizRouter from "./modules/quizzes/quiz.routes.ts"
+import { errorHandler } from "./middlewares/error.middleware.ts";
 
 const app = express();
 
@@ -9,5 +11,21 @@ app.get("/api/health", (_req, res) => {
         status: "ok",
     });
 });
+
+app.get("/api/health", (_req, res) => {
+    res.status(200).json({
+        status: "ok",
+    });
+});
+
+app.use("/quizzes", quizRouter);
+
+app.use((_req, res) => {
+    res.status(404).json({
+        message: "Route not found",
+    });
+});
+
+app.use(errorHandler);
 
 export default app;
